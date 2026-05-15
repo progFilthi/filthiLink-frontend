@@ -15,14 +15,14 @@ export async function fetchClient<T>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const accessToken =
+    typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
   const headers = new Headers(options.headers);
   headers.set('Content-Type', 'application/json');
 
-  if (token) {
-    headers.set('Authorization', 'Bearer ' + token);
+  if (accessToken) {
+    headers.set('Authorization', 'Bearer ' + accessToken);
   }
 
   const response = await fetch(API_BASE_URL + endpoint, {
@@ -41,7 +41,7 @@ export async function fetchClient<T>(
     }
 
     if (response.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('token');
+      localStorage.removeItem('accessToken');
       window.dispatchEvent(new Event('unauthorized'));
     }
 

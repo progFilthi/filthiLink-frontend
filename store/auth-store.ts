@@ -1,38 +1,38 @@
 import { create } from 'zustand';
 
 interface AuthState {
-  token: string | null;
+  accessToken: string | null;
   email: string | null;
   isAuthenticated: boolean;
-  setAuth: (token: string, email: string) => void;
+  setAuth: (accessToken: string, email: string) => void;
   logout: () => void;
   initialize: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  token: null,
+  accessToken: null,
   email: null,
   isAuthenticated: false,
-  setAuth: (token, email) => {
+  setAuth: (accessToken, email) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('token', token);
+      localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('email', email);
     }
-    set({ token, email, isAuthenticated: true });
+    set({ accessToken, email, isAuthenticated: true });
   },
   logout: () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
+      localStorage.removeItem('accessToken');
       localStorage.removeItem('email');
     }
-    set({ token: null, email: null, isAuthenticated: false });
+    set({ accessToken: null, email: null, isAuthenticated: false });
   },
   initialize: () => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
+      const accessToken = localStorage.getItem('accessToken');
       const email = localStorage.getItem('email');
-      if (token) {
-        set({ token, email, isAuthenticated: true });
+      if (accessToken) {
+        set({ accessToken, email, isAuthenticated: true });
       }
     }
   },

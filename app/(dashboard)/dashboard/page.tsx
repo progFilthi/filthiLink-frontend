@@ -26,7 +26,7 @@ export default function DashboardPage() {
           ApiKeysService.getKeys(),
         ]);
 
-        const totalLinks = linksResponse.totalElements ?? (linksResponse.content?.length || (Array.isArray(linksResponse) ? linksResponse.length : 0));
+        const totalLinks = linksResponse.page?.totalElements ?? (linksResponse.content?.length || (Array.isArray(linksResponse) ? linksResponse.length : 0));
         const apiKeys = keysResponse.length || 0;
         
         // Sum up clicks from the fetched links 
