@@ -23,8 +23,8 @@ export default function LoginPage() {
 
     try {
       const response = await AuthService.login({ email, password });
-      if (response.token && response.email) {
-        setAuth(response.token, response.email);
+      if (response.accessToken && response.email) {
+        setAuth(response.accessToken, response.email);
         router.push('/dashboard');
       }
     } catch {

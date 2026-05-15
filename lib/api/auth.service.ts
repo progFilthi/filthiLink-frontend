@@ -2,7 +2,8 @@ import { fetchClient } from './client';
 import type { 
   RegisterRequestDto, 
   AuthResponseDto, 
-  LoginRequestDto 
+  LoginRequestDto,
+  RefreshRequestDto
 } from '@/types/api';
 
 export const AuthService = {
@@ -17,6 +18,19 @@ export const AuthService = {
     return fetchClient<AuthResponseDto>('/api/v1/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  },
+
+  refresh: (data: RefreshRequestDto) => {
+    return fetchClient<AuthResponseDto>('/api/v1/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  logout: () => {
+    return fetchClient<void>('/api/v1/auth/logout', {
+      method: 'POST',
     });
   },
 };

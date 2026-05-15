@@ -7,19 +7,7 @@ export interface LinkResponseDto {
   shortUrl: string;
   originalUrl: string;
   clickCount: number;
-  expiresAt: string;
-}
-
-export interface PageLinkResponseDto {
-  totalElements: number;
-  totalPages: number;
-  first: boolean;
-  last: boolean;
-  numberOfElements: number;
-  size: number;
-  content: LinkResponseDto[];
-  number: number;
-  empty: boolean;
+  expiresAt: string | null;
 }
 
 export interface CreateApiKeyRequestDto {
@@ -36,23 +24,72 @@ export interface ApiKeyResponseDto {
 
 export interface RegisterRequestDto {
   email: string;
-  password: string;
+  password?: string;
+}
+
+export interface GrantedAuthority {
+  authority: string;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  password?: string;
+  createdAt: string;
+  username: string;
+  authorities: GrantedAuthority[];
+  accountNonExpired: boolean;
+  credentialsNonExpired: boolean;
+  accountNonLocked: boolean;
+  enabled: boolean;
+}
+
+export interface RefreshToken {
+  id: number;
+  user: User;
+  refreshTokenHash: string;
+  expiresAt: string;
+  createdAt: string;
+  revoked: boolean;
 }
 
 export interface AuthResponseDto {
-  token: string;
+  accessToken: string;
+  refreshToken?: RefreshToken;
   email: string;
+}
+
+export interface RefreshRequestDto {
+  refreshToken: string;
 }
 
 export interface LoginRequestDto {
   email: string;
-  password: string;
+  password?: string;
+}
+
+export interface Pageable {
+  page?: number;
+  size?: number;
+  sort?: string[];
+}
+
+export interface PageMetadata {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export interface PagedModelLinkResponseDto {
+  content: LinkResponseDto[];
+  page: PageMetadata;
 }
 
 export interface ApiKeyListItemDto {
   id: number;
   name: string;
   keyPrefix: string;
-  lastUsedAt: string;
+  lastUsedAt: string | null;
   createdAt: string;
 }

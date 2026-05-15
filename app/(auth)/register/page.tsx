@@ -29,8 +29,8 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       const response = await AuthService.register({ email, password });
-      if (response.token && response.email) {
-        setAuth(response.token, response.email);
+      if (response.accessToken && response.email) {
+        setAuth(response.accessToken, response.email);
         toast.success('Account created successfully.');
         router.push('/dashboard');
       }

@@ -26,13 +26,14 @@ export default function DashboardPage() {
           ApiKeysService.getKeys(),
         ]);
 
-        const totalLinks = linksResponse.totalElements || 0;
+        const totalLinks = linksResponse.page?.totalElements ?? (linksResponse.content?.length || (Array.isArray(linksResponse) ? linksResponse.length : 0));
         const apiKeys = keysResponse.length || 0;
         
         // Sum up clicks from the fetched links 
         // Note: For a real dashboard, the backend should provide a dedicated stats endpoint
-        const totalClicks = (linksResponse.content || []).reduce(
-          (sum, link) => sum + (link.clickCount || 0), 
+        const linkItems = Array.isArray(linksResponse) ? linksResponse : (linksResponse.content || []);
+        const totalClicks = linkItems.reduce(
+          (sum: number, link: any) => sum + (link.clickCount || 0), 
           0
         );
 

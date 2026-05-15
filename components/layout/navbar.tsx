@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/auth-store';
 import { Button } from '@/components/ui/button';
@@ -30,9 +31,7 @@ export function Navbar() {
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
-            <span className="text-sm font-bold text-background">fL</span>
-          </div>
+          <Image src="/filthi-link-logo.png" alt="filthiLink Logo" width={32} height={32} className="rounded-lg" />
           <span className="text-lg font-semibold tracking-tight">filthiLink</span>
         </Link>
 
