@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AuthLayout({
   children,
@@ -9,9 +10,7 @@ export default function AuthLayout({
     <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
       {/* Brand */}
       <Link href="/" className="mb-8 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
-          <span className="text-sm font-bold text-background">fL</span>
-        </div>
+        <Image src="/filthi-link-logo.png" alt="filthiLink Logo" width={32} height={32} className="rounded-lg" />
         <span className="text-lg font-semibold tracking-tight">filthiLink</span>
       </Link>
 

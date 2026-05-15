@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/utils';
@@ -55,9 +56,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         {/* Header */}
         <div className="flex h-16 items-center justify-between border-b border-border px-5">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-foreground">
-              <span className="text-xs font-bold text-background">fL</span>
-            </div>
+            <Image src="/filthi-link-logo.png" alt="filthiLink Logo" width={28} height={28} className="rounded-md" />
             <span className="text-sm font-semibold">filthiLink</span>
           </Link>
           <button
