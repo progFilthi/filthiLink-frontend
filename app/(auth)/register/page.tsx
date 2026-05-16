@@ -30,7 +30,7 @@ export default function RegisterPage() {
     try {
       const response = await AuthService.register({ email, password });
       if (response.accessToken && response.email) {
-        setAuth(response.accessToken, response.email);
+        setAuth(response.accessToken, response.refreshToken as unknown as string, response.email);
         toast.success('Account created successfully.');
         router.push('/dashboard');
       }

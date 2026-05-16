@@ -24,7 +24,7 @@ export default function LoginPage() {
     try {
       const response = await AuthService.login({ email, password });
       if (response.accessToken && response.email) {
-        setAuth(response.accessToken, response.email);
+        setAuth(response.accessToken, response.refreshToken as unknown as string, response.email);
         router.push('/dashboard');
       }
     } catch {
