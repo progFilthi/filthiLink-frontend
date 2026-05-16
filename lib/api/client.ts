@@ -32,14 +32,17 @@ export async function fetchClient<T>(
   options: RequestInit = {},
   isRetry = false
 ): Promise<T> {
-  const accessToken =
-    typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+  const store = useAuthStore.getState();
+  const accessToken = store.accessToken;
 
   const headers = new Headers(options.headers);
-  headers.set('Content-Type', 'application/json');
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
 
-  if (accessToken) {
-    headers.set('Authorization', 'Bearer ' + accessToken);
+  // If we have a token and it's not already set (e.g. by a retry), set it
+  if (accessToken && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
   const response = await fetch(API_BASE_URL + endpoint, {
@@ -48,18 +51,23 @@ export async function fetchClient<T>(
   });
 
   if (!response.ok) {
-    if (response.status === 401 && !isRetry && typeof window !== 'undefined') {
+    // Check for unauthorized/forbidden to trigger refresh
+    if ((response.status === 401 || response.status === 403) && !isRetry && typeof window !== 'undefined') {
+      
       if (isRefreshing) {
         try {
-          const token = await new Promise<string>((resolve, reject) => {
+          // Wait for the existing refresh to complete
+          await new Promise<string>((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           });
           
-          const newHeaders = new Headers(options.headers);
-          newHeaders.set('Content-Type', 'application/json');
-          newHeaders.set('Authorization', 'Bearer ' + token);
-          
-          return fetchClient<T>(endpoint, { ...options, headers: newHeaders }, true);
+          // Retry with the NEW token from the store
+          const newToken = useAuthStore.getState().accessToken;
+          const retryHeaders = new Headers(options.headers);
+          if (newToken) {
+            retryHeaders.set('Authorization', `Bearer ${newToken}`);
+          }
+          return fetchClient<T>(endpoint, { ...options, headers: retryHeaders }, true);
         } catch (err) {
           throw err;
         }
@@ -71,7 +79,7 @@ export async function fetchClient<T>(
       if (!refreshToken) {
         useAuthStore.getState().logout();
         window.dispatchEvent(new Event('unauthorized'));
-        throw new ApiError(401, 'Unauthorized');
+        throw new ApiError(response.status, 'Session expired');
       }
 
       try {
@@ -82,44 +90,50 @@ export async function fetchClient<T>(
         });
 
         if (!refreshResponse.ok) {
-          throw new Error('Refresh token expired or invalid');
+          throw new Error('Refresh failed');
         }
 
         const data = await refreshResponse.json();
+        
+        // Handle both string and object refresh token formats
         const newRefreshToken = typeof data.refreshToken === 'object' && data.refreshToken !== null 
           ? data.refreshToken.refreshTokenHash 
           : data.refreshToken;
 
+        // Update the store (this also updates localStorage)
         useAuthStore.getState().setAuth(data.accessToken, newRefreshToken, data.email);
+        
+        // Notify the queue
         processQueue(null, data.accessToken);
 
-        const newHeaders = new Headers(options.headers);
-        newHeaders.set('Content-Type', 'application/json');
-        newHeaders.set('Authorization', 'Bearer ' + data.accessToken);
+        // Retry the original request with the new token
+        const retryHeaders = new Headers(options.headers);
+        retryHeaders.set('Authorization', `Bearer ${data.accessToken}`);
         
-        return fetchClient<T>(endpoint, { ...options, headers: newHeaders }, true);
-      } catch (refreshError) {
-        processQueue(refreshError, null);
+        return fetchClient<T>(endpoint, { ...options, headers: retryHeaders }, true);
+      } catch (error) {
+        processQueue(error, null);
         useAuthStore.getState().logout();
         window.dispatchEvent(new Event('unauthorized'));
-        throw new ApiError(401, 'Unauthorized');
+        throw new ApiError(response.status, 'Authentication failed');
       } finally {
         isRefreshing = false;
       }
     }
 
+    // Standard error handling
     let errorMessage = response.statusText;
     try {
       const errorData = await response.json();
-      errorMessage =
-        errorData.message || errorData.error || response.statusText;
+      errorMessage = errorData.message || errorData.error || response.statusText;
     } catch {
-      // Ignore JSON parse error, fallback to statusText
+      // Body might not be JSON
     }
 
     throw new ApiError(response.status, errorMessage);
   }
 
+  // Handle empty responses
   const text = await response.text();
   if (!text) {
     return {} as T;
