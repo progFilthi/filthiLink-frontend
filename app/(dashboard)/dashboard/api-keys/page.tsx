@@ -31,11 +31,22 @@ import {
   IconTrash,
   IconKey,
   IconAlertTriangle,
+  IconEye,
+  IconEyeOff,
 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 export default function ApiKeysPage() {
+  const getDisplayPrefix = (prefix: string) => {
+    // Show the first two segments (e.g., sk_live) and mask everything after
+    const segments = prefix.split('_');
+    if (segments.length >= 2) {
+      return `${segments[0]}_${segments[1]}`;
+    }
+    return prefix;
+  };
+
   const [keys, setKeys] = useState<ApiKeyListItemDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +56,8 @@ export default function ApiKeysPage() {
   const [keyName, setKeyName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [rawKey, setRawKey] = useState<string | null>(null);
+  const [createdKeyPrefix, setCreatedKeyPrefix] = useState<string>('');
+  const [showFullKey, setShowFullKey] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Delete modal
@@ -76,6 +89,8 @@ export default function ApiKeysPage() {
     try {
       const response = await ApiKeysService.createKey({ name: keyName });
       setRawKey(response.rawKey ?? null);
+      setCreatedKeyPrefix(response.keyPrefix ?? '');
+      setShowFullKey(false);
       setKeys((prev) => [
         {
           id: response.id,
@@ -104,6 +119,8 @@ export default function ApiKeysPage() {
   const handleCloseCreate = () => {
     setIsCreateOpen(false);
     setRawKey(null);
+    setCreatedKeyPrefix('');
+    setShowFullKey(false);
     setKeyName('');
     setCopied(false);
   };
@@ -208,9 +225,22 @@ export default function ApiKeysPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 truncate rounded-md border border-border bg-muted px-3 py-2 font-mono text-sm">
-                      {rawKey}
-                    </code>
+                    <div className="relative flex-1">
+                      <code className="block w-full truncate rounded-md border border-border bg-muted px-3 py-2 pr-10 font-mono text-sm">
+                        {showFullKey ? rawKey : `${getDisplayPrefix(createdKeyPrefix)}${'•'.repeat(24)}`}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => setShowFullKey(!showFullKey)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showFullKey ? (
+                          <IconEyeOff className="h-4 w-4" />
+                        ) : (
+                          <IconEye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     <Button
                       variant="outline"
                       size="icon"
@@ -300,7 +330,7 @@ export default function ApiKeysPage() {
                   </TableCell>
                   <TableCell>
                     <code className="rounded bg-muted px-2 py-0.5 font-mono text-xs">
-                      {key.keyPrefix}...
+                      {getDisplayPrefix(key.keyPrefix)}{'•'.repeat(12)}
                     </code>
                   </TableCell>
                   <TableCell className="hidden text-sm text-muted-foreground sm:table-cell">
