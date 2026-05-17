@@ -6,18 +6,18 @@ import { useAuthStore } from '@/store/auth-store';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { isAuthenticated, token } = useAuthStore();
+  const { isAuthenticated, accessToken } = useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     // Wait for hydration — check localStorage directly as fallback
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem('accessToken');
     if (!storedToken) {
       router.replace('/login');
     } else {
       setIsChecking(false);
     }
-  }, [isAuthenticated, token, router]);
+  }, [isAuthenticated, accessToken, router]);
 
   if (isChecking) {
     return (
@@ -29,3 +29,4 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+

@@ -55,8 +55,12 @@ export interface RefreshToken {
 
 export interface AuthResponseDto {
   accessToken: string;
-  refreshToken?: RefreshToken;
+  refreshToken: string;
   email: string;
+}
+
+export interface GoogleAuthRequestDto {
+  idToken: string;
 }
 
 export interface RefreshRequestDto {

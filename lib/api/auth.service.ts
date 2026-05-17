@@ -3,7 +3,8 @@ import type {
   RegisterRequestDto, 
   AuthResponseDto, 
   LoginRequestDto,
-  RefreshRequestDto
+  RefreshRequestDto,
+  GoogleAuthRequestDto
 } from '@/types/api';
 
 export const AuthService = {
@@ -16,6 +17,13 @@ export const AuthService = {
 
   login: (data: LoginRequestDto) => {
     return fetchClient<AuthResponseDto>('/api/v1/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  googleLogin: (data: GoogleAuthRequestDto) => {
+    return fetchClient<AuthResponseDto>('/api/v1/auth/google', {
       method: 'POST',
       body: JSON.stringify(data),
     });
