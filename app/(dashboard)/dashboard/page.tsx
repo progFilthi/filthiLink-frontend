@@ -8,9 +8,10 @@ import { IconLink, IconClick, IconKey, IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
 import { LinksService } from '@/lib/api/links.service';
 import { ApiKeysService } from '@/lib/api/api-keys.service';
+import { ApiError } from '@/lib/api/client';
 
 export default function DashboardPage() {
-  const { email } = useAuthStore();
+  const { email, isAuthenticated } = useAuthStore();
   const [stats, setStats] = useState({
     totalLinks: 0,
     totalClicks: 0,
@@ -19,6 +20,8 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     async function fetchStats() {
       try {
         const [linksResponse, keysResponse] = await Promise.all([
@@ -39,6 +42,10 @@ export default function DashboardPage() {
 
         setStats({ totalLinks, totalClicks, apiKeys });
       } catch (error) {
+        // Auth errors are handled automatically by fetchClient (logout + redirect)
+        if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
+          return;
+        }
         console.error('Failed to load dashboard stats:', error);
       } finally {
         setIsLoading(false);
@@ -46,7 +53,7 @@ export default function DashboardPage() {
     }
 
     fetchStats();
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">

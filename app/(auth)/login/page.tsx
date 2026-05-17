@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { AuthService } from '@/lib/api/auth.service';
 import { useAuthStore } from '@/store/auth-store';
 import { toast } from 'sonner';
+import { GoogleLoginButton } from '@/components/auth/google-login-button';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function LoginPage() {
     try {
       const response = await AuthService.login({ email, password });
       if (response.accessToken && response.email) {
-        setAuth(response.accessToken, response.refreshToken as unknown as string, response.email);
+        setAuth(response.accessToken, response.refreshToken, response.email);
         router.push('/dashboard');
       }
     } catch {
@@ -36,18 +37,31 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="mb-6 text-center">
-        <h1 className="text-xl font-semibold tracking-tight">Welcome back</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+      <div className="mb-8 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
           Sign in to your account to continue
         </p>
       </div>
 
+      {/* Google Login */}
+      <GoogleLoginButton />
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">or</span>
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="login-email">Email</Label>
           <Input
-            id="email"
+            id="login-email"
             type="email"
             placeholder="you@example.com"
             value={email}
@@ -59,11 +73,11 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="login-password">Password</Label>
           <Input
-            id="password"
+            id="login-password"
             type="password"
-            placeholder="Min. 8 characters"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
