@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Merriweather } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
-
-const merriweather = Merriweather({subsets:['latin'],variable:'--font-serif'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "filthiLink - Modern URL Shortener for Developers",
+  title: "filthiLink — Links, Refined.",
   description:
-    "Shorten, track, and manage your links with a developer-first URL shortener. Clean API, real-time analytics, and beautiful dashboard.",
+    "A modern URL shortener. Shorten, track, and manage links with real-time analytics and a beautiful dashboard.",
 };
 
 export default function RootLayout({
@@ -33,13 +31,14 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={cn("h-full antialiased", geistSans.variable, geistMono.variable, "font-serif", merriweather.variable)}
+      className={cn("h-full antialiased", geistSans.variable, geistMono.variable)}
     >
       <body className="h-full">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
+          forcedTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <AuthProvider>

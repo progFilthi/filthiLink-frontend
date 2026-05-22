@@ -10,14 +10,15 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { SubscriptionService } from '@/lib/api/subscription.service';
 import type { SubscriptionResponseDto } from '@/types/api';
 import { ApiError } from '@/lib/api/client';
-import { 
-  IconCrown, 
-  IconCreditCard, 
-  IconCalendar, 
-  IconCheck, 
-  IconAlertCircle, 
+import {
+  IconCrown,
+  IconCreditCard,
+  IconCalendar,
+  IconCheck,
+  IconAlertCircle,
   IconLoader2,
-  IconArrowRight
+  IconArrowRight,
+  IconMail,
 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -46,13 +47,12 @@ export default function SettingsPage() {
       const data = await SubscriptionService.getMySubscription();
       setSub(data);
     } catch (err: unknown) {
-      const isAuthError = (err instanceof ApiError || (err && typeof err === 'object' && 'status' in err)) && 
+      const isAuthError = (err instanceof ApiError || (err && typeof err === 'object' && 'status' in err)) &&
         ((err as { status?: number }).status === 401 || (err as { status?: number }).status === 403);
       if (isAuthError) {
         return;
       }
       console.warn('Could not load subscription (falling back to FREE tier):', err);
-      // Fallback local mock in case backend returns 404 or fails
       setSub({
         plan: 'FREE',
         status: 'EXPIRED',
@@ -79,7 +79,7 @@ export default function SettingsPage() {
 
     setIsUpdating(true);
     const toastId = toast.loading('Initiating secure checkout...');
-    
+
     try {
       const response = await SubscriptionService.createCheckout(email, { billingCycle });
       if (response.checkoutUrl) {
@@ -103,7 +103,6 @@ export default function SettingsPage() {
       await SubscriptionService.cancelSubscription();
       toast.success('Subscription cancelled successfully.');
       setIsCancelOpen(false);
-      // Refresh the page data
       await fetchSubscription();
     } catch (err: unknown) {
       console.error(err);
@@ -117,8 +116,7 @@ export default function SettingsPage() {
   const isPremiumActive = sub?.isPremium && sub?.status === 'ACTIVE';
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      {/* Header */}
+    <div className="mx-auto max-w-2xl space-y-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -126,28 +124,31 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      {/* Profile */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Profile</CardTitle>
+          <CardDescription>Your account information</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              value={email ?? ''}
-              disabled
-              className="max-w-sm bg-muted"
-            />
-            <p className="text-xs text-muted-foreground">
+            <div className="relative max-w-sm">
+              <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="email"
+                value={email ?? ''}
+                disabled
+                className="pl-9 bg-muted"
+              />
+            </div>
+            <p className="pt-1 text-xs text-muted-foreground">
               Your email address is used for login and notifications.
             </p>
           </div>
         </CardContent>
       </Card>
 
-      <Card className={isPremiumActive ? 'border-primary shadow-sm' : ''}>
+      <Card className={isPremiumActive ? 'border-primary/20' : ''}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -155,9 +156,9 @@ export default function SettingsPage() {
               <CardDescription>View and manage your pricing tier.</CardDescription>
             </div>
             {isPremiumActive && (
-              <span className="flex items-center gap-1.5 rounded bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                 <IconCrown className="h-3.5 w-3.5" />
-                PREMIUM ACTIVE
+                Premium
               </span>
             )}
           </div>
@@ -165,28 +166,31 @@ export default function SettingsPage() {
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <IconLoader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <IconLoader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : sub?.plan === 'PREMIUM' ? (
             <div className="space-y-6">
-              {/* Premium Status Info */}
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="flex items-start gap-3 rounded-lg border border-border p-4 bg-muted/40">
-                  <IconCreditCard className="mt-0.5 h-5 w-5 text-primary shrink-0" />
+                <div className="flex items-center gap-4 rounded-xl border bg-card p-4 shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <IconCreditCard className="h-5 w-5 text-primary" />
+                  </div>
                   <div>
-                    <p className="text-sm font-semibold">Subscription Tier</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Premium Plan</p>
+                    <p className="text-sm font-medium">Subscription Tier</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">Premium Plan</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 rounded-lg border border-border p-4 bg-muted/40">
-                  <IconCalendar className="mt-0.5 h-5 w-5 text-primary shrink-0" />
+                <div className="flex items-center gap-4 rounded-xl border bg-card p-4 shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <IconCalendar className="h-5 w-5 text-primary" />
+                  </div>
                   <div>
-                    <p className="text-sm font-semibold">
+                    <p className="text-sm font-medium">
                       {sub.status === 'CANCELLED' ? 'Ends on' : 'Renewal Date'}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {sub.currentPeriodEnd 
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {sub.currentPeriodEnd
                         ? format(new Date(sub.currentPeriodEnd), 'MMMM d, yyyy')
                         : 'Unlimited'}
                     </p>
@@ -194,13 +198,12 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Cancel Button */}
               {sub.status === 'ACTIVE' ? (
-                <div className="flex items-center justify-between border-t border-border pt-4">
+                <div className="flex items-center justify-between pt-2">
                   <div>
                     <p className="text-sm font-medium">Cancel Subscription</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Cancel your automatic renewal. You will keep your features until the period ends.
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      You will keep your features until the period ends.
                     </p>
                   </div>
                   <Button variant="destructive" size="sm" onClick={() => setIsCancelOpen(true)}>
@@ -208,11 +211,11 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               ) : (
-                <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 flex gap-3">
-                  <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                <div className="flex items-start gap-4 rounded-xl border border-destructive/20 bg-destructive/5 p-4">
+                  <IconAlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
                   <div>
                     <p className="text-sm font-semibold text-destructive">Subscription Cancelled</p>
-                    <p className="text-xs text-destructive/80 mt-0.5">
+                    <p className="mt-1 text-xs leading-relaxed text-destructive/80">
                       Your premium plan is cancelled and will expire on{' '}
                       {sub.currentPeriodEnd ? format(new Date(sub.currentPeriodEnd), 'MMM d, yyyy') : 'the end of period'}.
                       You can upgrade again at any time to reactivate.
@@ -223,41 +226,34 @@ export default function SettingsPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Free Tier Info */}
-              <div className="rounded-lg border border-border p-4 bg-muted/30">
-                <p className="text-sm font-semibold">You are currently on the Free Tier</p>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                  Upgrade to Premium to get unlimited short links, unlimited active API keys, high-speed routing, and detailed click analytics.
+              <div className="rounded-xl border bg-card p-5 shadow-sm">
+                <p className="text-sm font-semibold">You are on the Free Tier</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  Upgrade to Premium for unlimited short links, unlimited API keys, high-speed routing, and detailed click analytics.
                 </p>
 
-                <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <IconCheck className="h-4 w-4 text-primary shrink-0" />
-                    <span>Unlimited Short Links</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <IconCheck className="h-4 w-4 text-primary shrink-0" />
-                    <span>Unlimited API Keys</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <IconCheck className="h-4 w-4 text-primary shrink-0" />
-                    <span>Real-time Analytics</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <IconCheck className="h-4 w-4 text-primary shrink-0" />
-                    <span>24/7 Dedicated Support</span>
-                  </div>
+                <div className="mt-4 grid gap-y-2 gap-x-6 sm:grid-cols-2">
+                  {[
+                    'Unlimited Short Links',
+                    'Unlimited API Keys',
+                    'Real-time Analytics',
+                    '24/7 Dedicated Support',
+                  ].map((feature) => (
+                    <div key={feature} className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <IconCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Upgrade Trigger */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-border pt-4">
-                <div className="flex items-center gap-4">
-                  {/* Cycle Switcher */}
-                  <div className="inline-flex items-center gap-1 rounded border border-border bg-muted p-1">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-muted-foreground">Billing:</span>
+                  <div className="inline-flex items-center gap-0.5 rounded-lg border bg-muted p-0.5">
                     <button
                       onClick={() => setBillingCycle('MONTHLY')}
-                      className={`rounded px-3 py-1 text-xs font-medium transition-all cursor-pointer ${
+                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
                         billingCycle === 'MONTHLY'
                           ? 'bg-card text-foreground shadow-sm'
                           : 'text-muted-foreground hover:text-foreground'
@@ -267,22 +263,22 @@ export default function SettingsPage() {
                     </button>
                     <button
                       onClick={() => setBillingCycle('YEARLY')}
-                      className={`relative rounded px-3 py-1 text-xs font-medium transition-all cursor-pointer ${
+                      className={`relative rounded-md px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
                         billingCycle === 'YEARLY'
                           ? 'bg-card text-foreground shadow-sm'
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       Yearly ($90)
-                      <span className="absolute -top-2 -right-2 rounded bg-primary px-1 py-0.5 text-[8px] font-bold text-primary-foreground leading-none">
+                      <span className="absolute -top-2 -right-2 rounded-full bg-primary px-1.5 py-0.5 text-[8px] font-bold text-primary-foreground leading-none">
                         -25%
                       </span>
                     </button>
                   </div>
                 </div>
 
-                <Button 
-                  className="gap-2 bg-primary text-primary-foreground border-none hover:bg-primary/90 shadow-sm"
+                <Button
+                  className="gap-2"
                   onClick={handleUpgrade}
                   disabled={isUpdating}
                 >
@@ -301,16 +297,16 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Appearance */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Appearance</CardTitle>
+          <CardDescription>Customize your interface</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium">Theme</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 Switch between light and dark mode.
               </p>
             </div>
@@ -319,15 +315,13 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Cancel Confirmation Dialog */}
       <Dialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Subscription</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel your Premium subscription? 
-              You will continue to have access to all Premium features until the end of your current billing period. 
-              After that, your account will revert to the Free tier limits.
+              Are you sure you want to cancel your Premium subscription?
+              You will continue to have access to all Premium features until the end of your current billing period.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

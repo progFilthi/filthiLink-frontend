@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { IconMenu2 } from '@tabler/icons-react';
-import { ModeToggle } from '@/components/mode-toggle';
+import { IconMenu2 } from "@tabler/icons-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
@@ -9,7 +9,7 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border px-6">
+    <header className="flex h-14 items-center justify-between border-b bg-background/80 backdrop-blur-xl px-6 lg:px-8">
       <button
         className="flex items-center justify-center lg:hidden"
         onClick={onMenuClick}

@@ -1,18 +1,22 @@
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border">
+    <footer className="border-t">
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-          {/* Brand */}
-          <div className="flex items-center gap-2">
-            <Image src="/filthi-link-logo.png" alt="filthiLink Logo" width={28} height={28} className="rounded-md" />
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/filthi-link-logo.png"
+              alt="filthiLink Logo"
+              width={24}
+              height={24}
+              className="rounded-md"
+            />
             <span className="text-sm font-semibold">filthiLink</span>
           </div>
 
-          {/* Links */}
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link href="#" className="transition-colors hover:text-foreground">
               Privacy

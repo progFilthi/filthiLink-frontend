@@ -39,7 +39,6 @@ import { format } from 'date-fns';
 
 export default function ApiKeysPage() {
   const getDisplayPrefix = (prefix: string) => {
-    // Show the first two segments (e.g., sk_live) and mask everything after
     const segments = prefix.split('_');
     if (segments.length >= 2) {
       return `${segments[0]}_${segments[1]}`;
@@ -51,7 +50,6 @@ export default function ApiKeysPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Create modal
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [keyName, setKeyName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
@@ -60,7 +58,6 @@ export default function ApiKeysPage() {
   const [showFullKey, setShowFullKey] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Delete modal
   const [deleteTarget, setDeleteTarget] = useState<ApiKeyListItemDto | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -144,9 +141,8 @@ export default function ApiKeysPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mx-auto max-w-5xl space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">API Keys</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -218,24 +214,25 @@ export default function ApiKeysPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
-                  <div className="flex items-start gap-3 rounded-md border border-destructive/20 bg-destructive/10 p-3">
+                  <div className="flex items-start gap-3 rounded-xl bg-destructive/10 p-4">
                     <IconAlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-                    <p className="text-xs leading-relaxed text-destructive">
-                      Make sure to copy your API key now. For security reasons,
-                      it will not be shown again. If you lose it, you&apos;ll
-                      need to generate a new key.
-                    </p>
+                    <div className="text-xs leading-relaxed text-destructive">
+                      <p className="font-semibold">This key will not be shown again</p>
+                      <p className="mt-1 opacity-80">Make sure to copy it now. If you lose it, you&apos;ll need to generate a new key.</p>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <div className="relative flex-1">
-                      <code className="block w-full truncate rounded-md border border-border bg-muted px-3 py-2 pr-10 font-mono text-sm">
-                        {showFullKey ? rawKey : `${getDisplayPrefix(createdKeyPrefix)}${'•'.repeat(24)}`}
+                      <code className="flex w-full items-center rounded-lg border bg-muted px-3 py-2.5 pr-10 font-mono text-sm">
+                        <span className="truncate">
+                          {showFullKey ? rawKey : `${getDisplayPrefix(createdKeyPrefix)}${'•'.repeat(24)}`}
+                        </span>
                       </code>
                       <button
                         type="button"
                         onClick={() => setShowFullKey(!showFullKey)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {showFullKey ? (
                           <IconEyeOff className="h-4 w-4" />
@@ -267,23 +264,22 @@ export default function ApiKeysPage() {
         </Dialog>
       </div>
 
-      {/* Loading State */}
       {isLoading && (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-lg" />
+            <Skeleton key={i} className="h-14 w-full rounded-lg" />
           ))}
         </div>
       )}
 
-      {/* Error State */}
       {error && !isLoading && (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-8 text-center">
+          <IconAlertTriangle className="mx-auto h-6 w-6 text-destructive mb-3" />
+          <p className="text-sm text-destructive font-medium">{error}</p>
           <Button
             variant="outline"
             size="sm"
-            className="mt-3"
+            className="mt-4"
             onClick={fetchKeys}
           >
             Try again
@@ -291,19 +287,18 @@ export default function ApiKeysPage() {
         </div>
       )}
 
-      {/* Empty State */}
       {!isLoading && !error && keys.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-20 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent">
-            <IconKey className="h-6 w-6 text-muted-foreground" />
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+            <IconKey className="h-7 w-7 text-primary" />
           </div>
-          <h3 className="mb-1 text-sm font-semibold">No API keys</h3>
-          <p className="mb-4 max-w-xs text-sm text-muted-foreground">
+          <h3 className="text-base font-semibold">No API keys</h3>
+          <p className="mt-1.5 max-w-xs text-sm leading-relaxed text-muted-foreground">
             Generate an API key to start using the filthiLink REST API.
           </p>
           <Button
             size="sm"
-            className="gap-2"
+            className="mt-6 gap-2"
             onClick={() => setIsCreateOpen(true)}
           >
             <IconPlus className="h-4 w-4" />
@@ -312,16 +307,15 @@ export default function ApiKeysPage() {
         </div>
       )}
 
-      {/* Keys Table */}
       {!isLoading && !error && keys.length > 0 && (
-        <div className="rounded-lg border border-border">
+        <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Key</TableHead>
-                <TableHead className="hidden sm:table-cell">Created</TableHead>
-                <TableHead className="hidden md:table-cell">Last Used</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Name</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Key</TableHead>
+                <TableHead className="hidden sm:table-cell text-xs font-medium uppercase tracking-wider text-muted-foreground">Created</TableHead>
+                <TableHead className="hidden md:table-cell text-xs font-medium uppercase tracking-wider text-muted-foreground">Last Used</TableHead>
                 <TableHead className="w-[50px]" />
               </TableRow>
             </TableHeader>
@@ -332,7 +326,7 @@ export default function ApiKeysPage() {
                     {key.name}
                   </TableCell>
                   <TableCell>
-                    <code className="rounded bg-muted px-2 py-0.5 font-mono text-xs">
+                    <code className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">
                       {getDisplayPrefix(key.keyPrefix)}{'•'.repeat(12)}
                     </code>
                   </TableCell>
@@ -363,7 +357,6 @@ export default function ApiKeysPage() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       <Dialog
         open={!!deleteTarget}
         onOpenChange={(open) => {
