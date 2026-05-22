@@ -78,7 +78,10 @@ export default function ApiKeysPage() {
   }, []);
 
   useEffect(() => {
-    fetchKeys();
+    const timer = setTimeout(() => {
+      fetchKeys();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchKeys]);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -215,9 +218,9 @@ export default function ApiKeysPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
-                  <div className="flex items-start gap-3 rounded-md border border-amber-500/20 bg-amber-500/5 p-3">
-                    <IconAlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-                    <p className="text-xs leading-relaxed text-amber-600 dark:text-amber-400">
+                  <div className="flex items-start gap-3 rounded-md border border-destructive/20 bg-destructive/10 p-3">
+                    <IconAlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                    <p className="text-xs leading-relaxed text-destructive">
                       Make sure to copy your API key now. For security reasons,
                       it will not be shown again. If you lose it, you&apos;ll
                       need to generate a new key.
@@ -248,7 +251,7 @@ export default function ApiKeysPage() {
                       onClick={handleCopyKey}
                     >
                       {copied ? (
-                        <IconCheck className="h-4 w-4 text-emerald-500" />
+                        <IconCheck className="h-4 w-4 text-primary" />
                       ) : (
                         <IconCopy className="h-4 w-4" />
                       )}

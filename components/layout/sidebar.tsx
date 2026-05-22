@@ -1,10 +1,14 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
+import { SubscriptionService } from '@/lib/api/subscription.service';
+import type { SubscriptionResponseDto } from '@/types/api';
 import { cn } from '@/lib/utils';
+import { ApiError } from '@/lib/api/client';
 import {
   IconLayoutDashboard,
   IconLink,
@@ -12,6 +16,7 @@ import {
   IconSettings,
   IconLogout,
   IconX,
+  IconCrown,
 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 
@@ -30,12 +35,41 @@ const navItems = [
 export function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout, email } = useAuthStore();
+  const { logout, email, isAuthenticated } = useAuthStore();
+  const [sub, setSub] = useState<SubscriptionResponseDto | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    async function checkSubscription() {
+      try {
+        const data = await SubscriptionService.getMySubscription();
+        setSub(data);
+      } catch (err) {
+        const isAuthError = (err instanceof ApiError || (err && typeof err === 'object' && 'status' in err)) && 
+          ((err as { status?: number }).status === 401 || (err as { status?: number }).status === 403);
+        if (isAuthError) {
+          return;
+        }
+        console.warn('Could not load subscription (falling back to FREE tier):', err);
+        setSub({
+          plan: 'FREE',
+          status: 'EXPIRED',
+          currentPeriodEnd: null,
+          isPremium: false
+        });
+      }
+    }
+    
+    checkSubscription();
+  }, [isAuthenticated, pathname]);
 
   const handleLogout = () => {
     logout();
     router.push('/');
   };
+
+  const isPremiumActive = sub?.isPremium && sub?.status === 'ACTIVE';
 
   return (
     <>
@@ -57,7 +91,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="flex h-16 items-center justify-between border-b border-border px-5">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/filthi-link-logo.png" alt="filthiLink Logo" width={28} height={28} className="rounded-md" />
-            <span className="text-sm font-semibold">filthiLink</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-semibold">filthiLink</span>
+              {isPremiumActive && (
+                <span className="rounded bg-primary px-1 py-0.5 text-[9px] font-bold text-primary-foreground leading-none">
+                  PRO
+                </span>
+              )}
+            </div>
           </Link>
           <button
             className="flex items-center justify-center lg:hidden"
@@ -69,7 +110,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 px-3 py-4">
+        <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
           {navItems.map((item) => {
             const isActive =
               item.href === '/dashboard'
@@ -93,12 +134,35 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </Link>
             );
           })}
+
+          {/* Upgrade Card CTA inside Nav */}
+          {isAuthenticated && !isPremiumActive && (
+            <div className="mx-2 mt-8 rounded-lg border border-border bg-muted/40 p-4 text-center">
+              <IconCrown className="mx-auto h-5 w-5 text-primary" />
+              <p className="mt-2 text-xs font-semibold">Upgrade to Premium</p>
+              <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed">
+                Get unlimited shortened links and programmatic API keys.
+              </p>
+              <Button
+                size="sm"
+                className="mt-3 w-full bg-primary text-primary-foreground text-[11px] font-medium py-1 border-none hover:bg-primary/90"
+                nativeButton={false}
+                render={<Link href="/dashboard/settings" />}
+                onClick={onClose}
+              >
+                Upgrade
+              </Button>
+            </div>
+          )}
         </nav>
 
         {/* Footer */}
         <div className="border-t border-border p-3">
-          <div className="mb-2 px-3 py-1">
+          <div className="mb-2 px-3 py-1 flex items-center justify-between gap-2">
             <p className="truncate text-xs text-muted-foreground">{email}</p>
+            {isPremiumActive && (
+              <IconCrown className="h-3.5 w-3.5 text-primary shrink-0" />
+            )}
           </div>
           <Button
             variant="ghost"

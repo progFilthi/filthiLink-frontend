@@ -35,7 +35,7 @@ export default function LinksPage() {
   const [newUrl, setNewUrl] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
 
   const fetchLinks = useCallback(async () => {
     setIsLoading(true);
@@ -50,7 +50,10 @@ export default function LinksPage() {
   }, []);
 
   useEffect(() => {
-    fetchLinks();
+    const timer = setTimeout(() => {
+      fetchLinks();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchLinks]);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -71,11 +74,11 @@ export default function LinksPage() {
     }
   };
 
-  const handleCopy = async (url: string, index: number) => {
+  const handleCopy = async (url: string, id: number) => {
     await navigator.clipboard.writeText(url);
-    setCopiedIndex(index);
+    setCopiedId(id);
     toast.success('Copied to clipboard');
-    setTimeout(() => setCopiedIndex(null), 2000);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const filteredLinks = links.filter((link) =>
@@ -217,11 +220,11 @@ export default function LinksPage() {
                       size="icon"
                       className="h-8 w-8"
                       onClick={() =>
-                        link.shortUrl && handleCopy(link.shortUrl, index)
+                        link.shortUrl && link.id && handleCopy(link.shortUrl, link.id)
                       }
                     >
-                      {copiedIndex === index ? (
-                        <IconCheck className="h-4 w-4 text-emerald-500" />
+                      {copiedId === link.id ? (
+                        <IconCheck className="h-4 w-4 text-primary" />
                       ) : (
                         <IconCopy className="h-4 w-4" />
                       )}

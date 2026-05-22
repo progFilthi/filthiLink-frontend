@@ -15,7 +15,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     if (!storedToken) {
       router.replace('/login');
     } else {
-      setIsChecking(false);
+      const timer = setTimeout(() => {
+        setIsChecking(false);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [isAuthenticated, accessToken, router]);
 

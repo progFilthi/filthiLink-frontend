@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Merriweather } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
+
+const merriweather = Merriweather({subsets:['latin'],variable:'--font-serif'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +33,7 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={cn("h-full antialiased", geistSans.variable, geistMono.variable)}
+      className={cn("h-full antialiased", geistSans.variable, geistMono.variable, "font-serif", merriweather.variable)}
     >
       <body className="h-full">
         <ThemeProvider

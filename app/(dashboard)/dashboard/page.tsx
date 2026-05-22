@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { LinksService } from '@/lib/api/links.service';
 import { ApiKeysService } from '@/lib/api/api-keys.service';
 import { ApiError } from '@/lib/api/client';
+import type { LinkResponseDto } from '@/types/api';
+
 
 export default function DashboardPage() {
   const { email, isAuthenticated } = useAuthStore();
@@ -36,14 +38,16 @@ export default function DashboardPage() {
         // Note: For a real dashboard, the backend should provide a dedicated stats endpoint
         const linkItems = Array.isArray(linksResponse) ? linksResponse : (linksResponse.content || []);
         const totalClicks = linkItems.reduce(
-          (sum: number, link: any) => sum + (link.clickCount || 0), 
+          (sum: number, link: LinkResponseDto) => sum + (link.clickCount || 0), 
           0
         );
 
         setStats({ totalLinks, totalClicks, apiKeys });
       } catch (error) {
         // Auth errors are handled automatically by fetchClient (logout + redirect)
-        if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
+        const isAuthError = (error instanceof ApiError || (error && typeof error === 'object' && 'status' in error)) && 
+          ((error as { status?: number }).status === 401 || (error as { status?: number }).status === 403);
+        if (isAuthError) {
           return;
         }
         console.error('Failed to load dashboard stats:', error);

@@ -90,14 +90,13 @@ export function HeroSection() {
     >
       {/* Background grid pattern */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-15" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
         {/* Badge */}
         <div className="hero-badge mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground opacity-0">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
           Developer-first URL shortener
         </div>
 
@@ -159,7 +158,7 @@ export function HeroSection() {
                 className="ml-3 shrink-0 gap-2"
               >
                 {copied ? (
-                  <IconCheck className="h-4 w-4 text-emerald-500" />
+                  <IconCheck className="h-4 w-4 text-primary" />
                 ) : (
                   <IconCopy className="h-4 w-4" />
                 )}
@@ -174,15 +173,15 @@ export function HeroSection() {
           <p>No credit card required. Free tier available.</p>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
-              <span className="inline-block h-1 w-1 rounded-full bg-emerald-500" />
+              <span className="inline-block h-1 w-1 rounded-full bg-primary" />
               99.9% uptime
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block h-1 w-1 rounded-full bg-emerald-500" />
+              <span className="inline-block h-1 w-1 rounded-full bg-primary" />
               REST API
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block h-1 w-1 rounded-full bg-emerald-500" />
+              <span className="inline-block h-1 w-1 rounded-full bg-primary" />
               Real-time analytics
             </span>
           </div>

@@ -97,3 +97,20 @@ export interface ApiKeyListItemDto {
   lastUsedAt: string | null;
   createdAt: string;
 }
+
+export interface CheckoutRequest {
+  billingCycle: 'MONTHLY' | 'YEARLY';
+}
+
+export interface CheckoutResponse {
+  checkoutUrl: string;
+  sessionId: string;
+}
+
+export interface SubscriptionResponseDto {
+  plan: 'FREE' | 'PREMIUM';
+  status: 'ACTIVE' | 'CANCELLED' | 'ON_HOLD' | 'FAILED' | 'EXPIRED';
+  currentPeriodEnd: string | null;
+  isPremium: boolean;
+}
+
