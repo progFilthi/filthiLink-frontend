@@ -119,7 +119,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <SidebarNav items={navItems} onItemClick={onClose} />
 
           {isAuthenticated && !isPremiumActive && (
-            <div className="mx-1 mt-6 rounded-xl border bg-card/50 p-4">
+            <div className="mx-1 mt-6 rounded-xl border-2 border-dashed border-primary/20 bg-primary/[0.03] p-4 transition-all hover:border-primary/30">
               <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                 <IconCrown className="h-4 w-4 text-primary" />
               </div>
@@ -127,15 +127,11 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               <p className="mt-1 text-center text-[10px] leading-relaxed text-muted-foreground">
                 Unlimited links, API keys, and analytics.
               </p>
-              <Button
-                size="sm"
-                className="mt-3 w-full gap-1 text-xs"
-                nativeButton={false}
-                render={<Link href="/dashboard/settings" />}
-                onClick={onClose}
-              >
-                Upgrade
-                <IconArrowRight className="h-3 w-3" />
+              <Button asChild size="sm" className="mt-3 w-full gap-1 text-xs">
+                <Link href="/dashboard/settings" onClick={onClose}>
+                  Upgrade
+                  <IconArrowRight className="h-3 w-3" />
+                </Link>
               </Button>
             </div>
           )}

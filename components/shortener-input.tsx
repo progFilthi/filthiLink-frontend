@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { IconArrowRight, IconLink } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface ShortenerInputProps {
   onSubmit: (url: string) => void;
@@ -18,6 +19,7 @@ export function ShortenerInput({
 }: ShortenerInputProps) {
   const [url, setUrl] = useState("");
   const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +42,7 @@ export function ShortenerInput({
             <IconLink className="h-4 w-4 text-muted-foreground" />
           </div>
           <input
+            ref={inputRef}
             type="url"
             placeholder="Paste your long URL here..."
             value={url}
@@ -58,11 +61,10 @@ export function ShortenerInput({
               className="gap-1.5 rounded-lg px-4 text-sm"
             >
               {isLoading ? (
-                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
+                <LoadingSpinner className="text-primary-foreground" size="sm" />
               ) : (
                 <>
                   Shorten
-                  <IconArrowRight className="h-3.5 w-3.5" />
                 </>
               )}
             </Button>

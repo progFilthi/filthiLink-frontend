@@ -26,6 +26,7 @@ import type { LinkResponseDto } from "@/types/api";
 import { IconPlus, IconSearch, IconFilter } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { LinkTable } from "@/components/link-table";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export default function LinksPage() {
   const [links, setLinks] = useState<LinkResponseDto[]>([]);
@@ -104,14 +105,12 @@ export default function LinksPage() {
         </div>
 
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger
-            render={
-              <Button size="sm" className="gap-1.5">
-                <IconPlus className="h-4 w-4" />
-                Create Link
-              </Button>
-            }
-          />
+          <DialogTrigger asChild>
+            <Button size="sm" className="gap-1.5">
+              <IconPlus className="h-4 w-4" />
+              Create Link
+            </Button>
+          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create a new link</DialogTitle>
@@ -143,7 +142,7 @@ export default function LinksPage() {
                 </Button>
                 <Button type="submit" disabled={isCreating} className="gap-1.5">
                   {isCreating ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
+                    <LoadingSpinner className="text-primary-foreground" />
                   ) : (
                     "Create"
                   )}

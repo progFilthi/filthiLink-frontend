@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useAuthStore } from '@/store/auth-store';
 import { SubscriptionService } from '@/lib/api/subscription.service';
 import { Button } from '@/components/ui/button';
-import { IconCheck, IconCircleCheckFilled, IconCrown, IconArrowRight } from '@tabler/icons-react';
+import { IconCheck } from '@tabler/icons-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 
 export function PricingSection() {
@@ -63,28 +65,28 @@ export function PricingSection() {
   ];
 
   return (
-    <section id="pricing" className="relative border-t px-6 py-24 overflow-hidden scroll-mt-20">
+    <section id="pricing" className="px-6 py-24 scroll-mt-14 overflow-hidden">
       <div className="mx-auto max-w-5xl">
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.5 }}
-          className="mb-14 text-center"
+          className="mb-14 flex flex-col items-center text-center"
         >
-          <h2 className="mb-4 text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-semibold tracking-tight text-foreground">
             Simple, transparent pricing.
           </h2>
-          <p className="mx-auto max-w-md text-sm text-muted-foreground">
+          <p className="max-w-md text-base text-muted-foreground">
             Choose the plan that fits your workflow. Upgrade or downgrade at any time.
           </p>
 
-          <div className="mt-8 inline-flex items-center gap-0.5 rounded-lg border bg-card p-0.5 shadow-sm">
+          <div className="mt-8 inline-flex items-center rounded-lg bg-muted p-1">
             <button
               onClick={() => setBillingCycle('MONTHLY')}
-              className={`rounded-md px-4 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+              className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors cursor-pointer ${
                 billingCycle === 'MONTHLY'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -92,121 +94,108 @@ export function PricingSection() {
             </button>
             <button
               onClick={() => setBillingCycle('YEARLY')}
-              className={`relative rounded-md px-4 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+              className={`relative rounded-md px-4 py-1.5 text-sm font-medium transition-colors cursor-pointer ${
                 billingCycle === 'YEARLY'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Yearly
-              <span className="absolute -top-2.5 -right-2.5 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold text-primary-foreground leading-none">
-                2 free
+              <span className="absolute -top-2 -right-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground leading-none">
+                Save 25%
               </span>
             </button>
           </div>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 max-w-3xl mx-auto items-stretch">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+        <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
+          {/* Free Plan */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex flex-col justify-between rounded-xl border bg-card p-8 transition-all duration-200 hover:border-muted-foreground/30"
+            className="flex flex-col justify-between rounded-xl border border-border bg-card p-8 transition-colors hover:border-foreground/20"
           >
             <div>
-              <div className="mb-5">
-                <h3 className="text-lg font-semibold tracking-tight">Free</h3>
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-foreground">Free</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground">Perfect for personal use and testing.</p>
               </div>
-
-              <div className="my-8">
-                <div className="flex items-baseline">
+              <div className="my-6">
+                <div className="flex items-baseline text-foreground">
                   <span className="text-4xl font-bold tracking-tight">$0</span>
-                  <span className="ml-1.5 text-sm text-muted-foreground">/forever</span>
+                  <span className="ml-1 text-sm text-muted-foreground">/forever</span>
                 </div>
               </div>
-
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {freeFeatures.map((feature) => (
                   <li key={feature} className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <IconCheck className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <IconCheck className="h-4 w-4 text-muted-foreground" />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-
             <div className="mt-8">
               <Button
                 variant="outline"
-                className="w-full justify-center gap-2"
+                className="w-full"
                 onClick={() => router.push(isAuthenticated ? '/dashboard' : '/register')}
               >
                 {isAuthenticated ? 'Go to Dashboard' : 'Get Started'}
-                <IconArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+          {/* Premium Plan */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative flex flex-col justify-between rounded-xl border-2 border-primary bg-card p-8 shadow-sm shadow-primary/5 transition-all duration-200"
+            className="flex flex-col justify-between rounded-xl border-2 border-primary bg-card p-8 shadow-sm shadow-primary/5"
           >
-            <div className="absolute -top-3 right-6 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-              <IconCrown className="h-3.5 w-3.5" />
-              Premium
-            </div>
-
             <div>
-              <div className="mb-5">
-                <h3 className="text-lg font-semibold tracking-tight">Premium</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">For creators, developers, and businesses.</p>
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">Premium</h3>
+                  <p className="mt-1.5 text-sm text-muted-foreground">For creators, developers, and businesses.</p>
+                </div>
+                <Badge variant="default" className="h-6">Pro</Badge>
               </div>
-
-              <div className="my-8">
-                <div className="flex items-baseline">
+              <div className="my-6">
+                <div className="flex items-baseline text-foreground">
                   <span className="text-4xl font-bold tracking-tight">
                     {billingCycle === 'MONTHLY' ? '$10' : '$90'}
                   </span>
-                  <span className="ml-1.5 text-sm text-muted-foreground">
+                  <span className="ml-1 text-sm text-muted-foreground">
                     {billingCycle === 'MONTHLY' ? '/month' : '/year'}
                   </span>
                 </div>
-                {billingCycle === 'YEARLY' && (
-                  <p className="mt-1.5 text-xs font-medium text-primary/80">
-                    $7.50/mo — save 25%
-                  </p>
-                )}
               </div>
-
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {premiumFeatures.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3 text-sm">
-                    <IconCircleCheckFilled className="h-4 w-4 shrink-0 text-primary" />
-                    <span className="text-foreground">{feature}</span>
+                  <li key={feature} className="flex items-center gap-3 text-sm text-foreground">
+                    <IconCheck className="h-4 w-4 text-primary" />
+                    <span>{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-
             <div className="mt-8">
               <Button
-                className="w-full justify-center gap-2"
+                className="w-full gap-2"
                 onClick={handleSelectPremium}
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
+                  <LoadingSpinner className="text-primary-foreground" />
                 ) : isAuthenticated ? (
                   'Upgrade to Premium'
                 ) : (
                   'Get Premium'
                 )}
-                {!isLoading && <IconArrowRight className="h-4 w-4" />}
               </Button>
             </div>
           </motion.div>

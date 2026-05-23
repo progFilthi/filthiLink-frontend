@@ -16,12 +16,12 @@ import {
   IconCalendar,
   IconCheck,
   IconAlertCircle,
-  IconLoader2,
   IconArrowRight,
   IconMail,
 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import {
   Dialog,
   DialogContent,
@@ -166,7 +166,7 @@ export default function SettingsPage() {
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <IconLoader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <LoadingSpinner size="md" className="text-muted-foreground" />
             </div>
           ) : sub?.plan === 'PREMIUM' ? (
             <div className="space-y-6">
@@ -283,7 +283,7 @@ export default function SettingsPage() {
                   disabled={isUpdating}
                 >
                   {isUpdating ? (
-                    <IconLoader2 className="h-4 w-4 animate-spin" />
+                    <LoadingSpinner size="sm" />
                   ) : (
                     <>
                       Upgrade to Premium
@@ -330,7 +330,7 @@ export default function SettingsPage() {
             </Button>
             <Button variant="destructive" onClick={handleCancelSubscription} disabled={isCancelling} className="gap-2">
               {isCancelling ? (
-                <IconLoader2 className="h-4 w-4 animate-spin" />
+                <LoadingSpinner size="sm" />
               ) : (
                 'Cancel Subscription'
               )}

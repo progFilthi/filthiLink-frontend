@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/auth-store";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AnimatedCounter } from "@/components/animated-counter";
 import { LinksService } from "@/lib/api/links.service";
 import { ApiError } from "@/lib/api/client";
 import type { LinkResponseDto } from "@/types/api";
-import { IconLink, IconClick, IconPlus } from "@tabler/icons-react";
+import { IconLink, IconClick, IconPlus, IconCheck, IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -80,9 +81,30 @@ export default function DashboardPage() {
     },
   ];
 
+  const steps = [
+    {
+      step: "1",
+      text: "Create your first shortened link from the ",
+      link: { href: "/dashboard/links", label: "Links page" },
+      done: stats.totalLinks > 0,
+    },
+    {
+      step: "2",
+      text: "Track clicks and manage links from your ",
+      link: { href: "/dashboard", label: "Dashboard" },
+      done: stats.totalClicks > 0,
+    },
+    {
+      step: "3",
+      text: "Integrate via API using keys from the ",
+      link: { href: "/dashboard/api-keys", label: "API Keys page" },
+      done: false,
+    },
+  ];
+
   return (
     <div className="mx-auto max-w-5xl space-y-8">
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -90,79 +112,53 @@ export default function DashboardPage() {
             <span className="font-medium text-foreground">{email}</span>
           </p>
         </div>
-        <Button
-          size="sm"
-          className="gap-1.5"
-          nativeButton={false}
-          render={<Link href="/dashboard/links" />}
-        >
-          <IconPlus className="h-4 w-4" />
-          New Link
+        <Button asChild size="sm" className="gap-1.5">
+          <Link href="/dashboard/links">
+            <IconPlus className="h-4 w-4" />
+            New Link
+          </Link>
         </Button>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-3">
         {statCards.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-xl border bg-card p-5 shadow-sm transition-all duration-200 hover:border-primary/20"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">
+          <Card key={stat.label} className="transition-all duration-200 hover:border-primary/20">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-xs font-medium text-muted-foreground">
                 {stat.label}
-              </span>
+              </CardTitle>
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                 <stat.icon className="h-4 w-4 text-primary" />
               </div>
-            </div>
-            <p className="mt-3 font-mono text-2xl font-bold tracking-tight text-foreground">
-              {isLoading ? (
-                <span className="inline-block h-8 w-16 animate-pulse rounded bg-muted" />
-              ) : (
-                <AnimatedCounter
-                  end={stat.value}
-                  enabled={countersEnabled}
-                />
-              )}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {stat.hint}
-            </p>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <p className="font-mono text-2xl font-bold tracking-tight text-foreground">
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <AnimatedCounter end={stat.value} enabled={countersEnabled} />
+                )}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {stat.hint}
+              </p>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       <Card>
-        <div className="p-5">
-          <h3 className="text-sm font-semibold">Getting Started</h3>
-        </div>
-        <div className="px-5 pb-5">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Getting Started</CardTitle>
+        </CardHeader>
+        <CardContent className="pb-5">
           <div className="space-y-0">
-            {[
-              {
-                step: "1",
-                text: "Create your first shortened link from the ",
-                link: { href: "/dashboard/links", label: "Links page" },
-                done: stats.totalLinks > 0,
-              },
-              {
-                step: "2",
-                text: "Track clicks and manage links from your ",
-                link: { href: "/dashboard", label: "Dashboard" },
-                done: stats.totalClicks > 0,
-              },
-              {
-                step: "3",
-                text: "Integrate via API using keys from the ",
-                link: { href: "/dashboard/api-keys", label: "API Keys page" },
-                done: false,
-              },
-            ].map((item, i) => (
+            {steps.map((item, i) => (
               <div
                 key={item.step}
                 className={cn(
                   "flex items-center gap-3 py-3",
-                  i !== 2 && "border-b",
+                  i !== steps.length - 1 && "border-b",
                 )}
               >
                 <div
@@ -173,7 +169,11 @@ export default function DashboardPage() {
                       : "bg-muted text-muted-foreground",
                   )}
                 >
-                  {item.done ? "\u2713" : item.step}
+                  {item.done ? (
+                    <IconCheck className="h-3 w-3" />
+                  ) : (
+                    item.step
+                  )}
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {item.text}
@@ -188,8 +188,19 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </CardContent>
       </Card>
+
+      {stats.totalLinks > 0 && (
+        <div className="flex justify-center">
+          <Button asChild variant="outline" size="sm" className="gap-2">
+            <Link href="/dashboard/links">
+              View all links
+              <IconArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

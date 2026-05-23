@@ -7,7 +7,8 @@ import { LinksService } from "@/lib/api/links.service";
 import { toast } from "sonner";
 import { ShortenerInput } from "@/components/shortener-input";
 import { ResultCard } from "@/components/result-card";
-import { StatsStrip } from "@/components/landing/stats-strip";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
 export function HeroSection() {
@@ -49,77 +50,69 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center px-6 pt-28 pb-20 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
-      <div className="mx-auto flex w-full max-w-2xl flex-col items-center text-center">
+    <section className="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center px-6 py-20 overflow-hidden">
+      <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border bg-card/50 px-4 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm"
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-          Developer-first URL shortener
+          <Badge variant="outline" className="mb-8 h-7 px-3 text-sm font-medium text-muted-foreground border-border bg-muted/30">
+            Developer-focused URL shortener
+          </Badge>
         </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+        
+        <motion.h1 
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-          className="mb-6 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
+          className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
         >
-          Links,{" "}
-          <span className="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
-            Refined.
-          </span>
+          Short URLs. <span className="text-muted-foreground">Track everything.</span>
         </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
+        <motion.p 
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-          className="mb-10 max-w-md text-base text-muted-foreground sm:text-lg"
+          className="mb-12 max-w-2xl text-lg text-muted-foreground sm:text-xl leading-relaxed"
         >
-          Shorten, track, and manage your links with precision.
+          A modern, open-source URL shortener with real-time analytics, API access, and secure link management.
         </motion.p>
 
-        {!shortUrl ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
-            className="w-full max-w-lg"
-          >
-            <ShortenerInput onSubmit={handleShorten} isLoading={isLoading} />
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="w-full max-w-lg"
-          >
-            <ResultCard
-              shortUrl={shortUrl}
-              originalUrl={originalUrl}
-              slug={slug}
-            />
-            <button
-              onClick={handleReset}
-              className="mt-3 text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground"
-            >
-              Shorten another link
-            </button>
-          </motion.div>
-        )}
-
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-          className="mt-20 w-full"
+          transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+          className="w-full max-w-xl"
         >
-          <StatsStrip />
+          {!shortUrl ? (
+            <ShortenerInput onSubmit={handleShorten} isLoading={isLoading} />
+          ) : (
+            <div className="flex flex-col items-center">
+              <ResultCard shortUrl={shortUrl} originalUrl={originalUrl} slug={slug} className="w-full" />
+              <button
+                onClick={handleReset}
+                className="mt-4 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Shorten another link
+              </button>
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="mt-12 flex items-center justify-center gap-6"
+        >
+          <Link
+            href="#pricing"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            See pricing
+          </Link>
         </motion.div>
       </div>
     </section>

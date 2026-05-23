@@ -36,6 +36,7 @@ import {
 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function ApiKeysPage() {
   const getDisplayPrefix = (prefix: string) => {
@@ -157,14 +158,12 @@ export default function ApiKeysPage() {
             else setIsCreateOpen(true);
           }}
         >
-          <DialogTrigger
-            render={
-              <Button size="sm" className="gap-2">
-                <IconPlus className="h-4 w-4" />
-                Generate API Key
-              </Button>
-            }
-          />
+          <DialogTrigger asChild>
+            <Button size="sm" className="gap-2">
+              <IconPlus className="h-4 w-4" />
+              Generate API Key
+            </Button>
+          </DialogTrigger>
           <DialogContent>
             {!rawKey ? (
               <>
@@ -197,7 +196,7 @@ export default function ApiKeysPage() {
                     </Button>
                     <Button type="submit" disabled={isCreating} className="gap-2">
                       {isCreating ? (
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
+                        <LoadingSpinner className="text-primary-foreground" />
                       ) : (
                         'Generate'
                       )}
@@ -382,7 +381,7 @@ export default function ApiKeysPage() {
               className="gap-2"
             >
               {isDeleting ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                <LoadingSpinner className="text-white" />
               ) : (
                 'Delete'
               )}

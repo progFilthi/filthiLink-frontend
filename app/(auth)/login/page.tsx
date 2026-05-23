@@ -10,6 +10,7 @@ import { AuthService } from "@/lib/api/auth.service";
 import { useAuthStore } from "@/store/auth-store";
 import { toast } from "sonner";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { IconMail, IconLock, IconArrowRight } from "@tabler/icons-react";
 
 export default function LoginPage() {
@@ -94,13 +95,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <Button
-          type="submit"
-          className="h-10 w-full gap-2"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="h-10 w-full gap-2" disabled={isLoading}>
           {isLoading ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
+            <LoadingSpinner className="text-primary-foreground" />
           ) : (
             <>
               Sign in
