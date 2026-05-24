@@ -1,10 +1,7 @@
 import { useAuthStore } from '@/store/auth-store';
+import { config } from '@/lib/config';
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 
-  (process.env.NODE_ENV === 'production' 
-    ? 'https://api.filthilink.store' 
-    : 'http://localhost:8080');
+export const API_BASE_URL = config.api.baseUrl;
 
 export class ApiError extends Error {
   constructor(
