@@ -4,11 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { AuthService } from "@/lib/api/auth.service";
+import { SubscriptionService } from "@/lib/api/subscription.service";
 import { useAuthStore } from "@/store/auth-store";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-export function GoogleLoginButton() {
+interface GoogleLoginButtonProps {
+  billingCycle?: 'MONTHLY' | 'YEARLY';
+}
+
+export function GoogleLoginButton({ billingCycle }: GoogleLoginButtonProps = {}) {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +32,19 @@ export function GoogleLoginButton() {
 
       if (response.accessToken && response.email) {
         setAuth(response.accessToken, response.refreshToken, response.email);
+
+        if (billingCycle) {
+          toast.success("Signed in. Redirecting to checkout...");
+          const checkoutRes = await SubscriptionService.createCheckout(
+            response.email,
+            { billingCycle }
+          );
+          if (checkoutRes.checkoutUrl) {
+            window.location.href = checkoutRes.checkoutUrl;
+            return;
+          }
+        }
+
         toast.success("Signed in with Google.");
         router.push("/dashboard");
       }

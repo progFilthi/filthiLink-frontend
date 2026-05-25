@@ -1,24 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthService } from "@/lib/api/auth.service";
+import { SubscriptionService } from "@/lib/api/subscription.service";
 import { useAuthStore } from "@/store/auth-store";
 import { toast } from "sonner";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { IconMail, IconLock, IconArrowRight } from "@tabler/icons-react";
 
-export default function RegisterPage() {
+function useCheckoutPlan() {
+  const searchParams = useSearchParams();
+  const plan = searchParams.get("plan");
+  const cycle = searchParams.get("cycle");
+  return {
+    shouldCheckout: plan === "premium",
+    billingCycle: cycle === "yearly" ? "YEARLY" as const : "MONTHLY" as const,
+  };
+}
+
+function RegisterForm() {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { shouldCheckout, billingCycle } = useCheckoutPlan();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +39,19 @@ export default function RegisterPage() {
       const response = await AuthService.register({ email, password });
       if (response.accessToken && response.email) {
         setAuth(response.accessToken, response.refreshToken, response.email);
+
+        if (shouldCheckout) {
+          toast.success("Account created. Redirecting to checkout...");
+          const checkoutRes = await SubscriptionService.createCheckout(
+            response.email,
+            { billingCycle }
+          );
+          if (checkoutRes.checkoutUrl) {
+            window.location.href = checkoutRes.checkoutUrl;
+            return;
+          }
+        }
+
         toast.success("Account created successfully.");
         router.push("/dashboard");
       }
@@ -46,7 +71,7 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <GoogleLoginButton />
+      <GoogleLoginButton billingCycle={shouldCheckout ? billingCycle : undefined} />
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
@@ -117,5 +142,13 @@ export default function RegisterPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   );
 }
