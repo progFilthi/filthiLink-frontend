@@ -13,7 +13,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     // Wait for hydration — check localStorage directly as fallback
     const storedToken = localStorage.getItem('accessToken');
     if (!storedToken) {
-      router.replace('/login');
+      router.replace('/');
     } else {
       const timer = setTimeout(() => {
         setIsChecking(false);
