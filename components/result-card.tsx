@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, formatDisplayUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { IconCopy, IconCheck, IconExternalLink, IconChartBar, IconQrcode } from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconExternalLink, IconChartBar } from "@tabler/icons-react";
 import Link from "next/link";
-import { QRCodeSVG } from "qrcode.react";
 
 interface ResultCardProps {
   shortUrl: string;
@@ -22,7 +21,6 @@ export function ResultCard({
   className,
 }: ResultCardProps) {
   const [copied, setCopied] = useState(false);
-  const [showQR, setShowQR] = useState(false);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(shortUrl);
@@ -47,7 +45,7 @@ export function ResultCard({
                   className="group flex items-center gap-1.5 truncate"
                 >
                   <span className="font-mono text-base font-semibold text-foreground">
-                    {shortUrl}
+                    {formatDisplayUrl(shortUrl)}
                   </span>
                   <IconExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-muted-foreground" />
                 </a>
@@ -55,17 +53,6 @@ export function ResultCard({
             </div>
 
             <div className="flex shrink-0 items-center gap-1.5">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowQR(!showQR)}
-                className={cn(
-                  "h-8 w-8 text-muted-foreground",
-                  showQR && "bg-primary/10 text-primary",
-                )}
-              >
-                <IconQrcode className="h-4 w-4" />
-              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -103,24 +90,6 @@ export function ResultCard({
               </Button>
             </div>
           </div>
-
-          <AnimatePresence>
-            {showQR && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="mt-5 flex justify-center border-t pt-5">
-                  <div className="rounded-lg bg-white p-2 shadow-sm">
-                    <QRCodeSVG value={shortUrl} size={120} />
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           {slug && (
             <div className="mt-4 flex items-center gap-3 border-t pt-4">

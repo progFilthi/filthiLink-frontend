@@ -22,7 +22,8 @@ import {
   IconCalendar,
   IconClock,
 } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import { cn, formatDisplayUrl } from "@/lib/utils";
+import { config } from "@/lib/config";
 import { format } from "date-fns";
 
 const mockClickData = [
@@ -62,7 +63,7 @@ export default function LinkAnalyticsPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const shortUrl = `https://filthi.link/${slug}`;
+  const shortUrl = `${config.shortUrl.baseDomain}/${slug}`;
   const totalClicks = mockClickData.reduce((sum, d) => sum + d.clicks, 0);
 
   const handleCopy = async () => {
@@ -99,7 +100,7 @@ export default function LinkAnalyticsPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-mono text-base font-bold tracking-tight">
-                {shortUrl}
+                {formatDisplayUrl(shortUrl)}
               </h1>
               <a
                 href={shortUrl}
@@ -243,7 +244,7 @@ export default function LinkAnalyticsPage() {
                 <p className="text-xs font-medium text-muted-foreground">
                   Short URL
                 </p>
-                <p className="mt-1 font-mono text-sm">{shortUrl}</p>
+                <p className="mt-1 font-mono text-sm">{formatDisplayUrl(shortUrl)}</p>
               </div>
               <div>
                 <p className="text-xs font-medium text-muted-foreground">
