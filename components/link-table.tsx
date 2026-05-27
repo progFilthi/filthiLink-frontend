@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatDisplayUrl } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -109,7 +109,7 @@ export function LinkTable({
                     href={`/dashboard/${getSlug(link.shortUrl)}`}
                     className="font-mono text-sm text-foreground transition-colors hover:text-primary"
                   >
-                    {link.shortUrl}
+                    {formatDisplayUrl(link.shortUrl)}
                   </Link>
                   <a
                     href={link.shortUrl}

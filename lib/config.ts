@@ -9,6 +9,14 @@ export const config = {
       );
     },
   },
+  shortUrl: {
+    get baseDomain() {
+      return (
+        process.env.NEXT_PUBLIC_SHORT_URL_DOMAIN ||
+        'https://filthi.link'
+      );
+    },
+  },
   google: {
     clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '',
   },
