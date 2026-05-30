@@ -80,8 +80,8 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   const allNavItems = userIsAdmin
     ? [
         ...navItems,
-        { href: "/dashboard/admin", label: "Admin", icon: IconShield, exact: true },
-        { href: "/dashboard/admin/users", label: "Users", icon: IconUsers },
+        { href: "/admin", label: "Admin", icon: IconShield, exact: true },
+        { href: "/admin/users", label: "Users", icon: IconUsers },
       ]
     : navItems;
 
