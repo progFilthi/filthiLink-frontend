@@ -9,6 +9,7 @@ import { SubscriptionService } from "@/lib/api/subscription.service";
 import type { SubscriptionResponseDto } from "@/types/api";
 import { cn } from "@/lib/utils";
 import { ApiError } from "@/lib/api/client";
+import { isAdmin } from "@/lib/jwt";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,8 @@ import {
   IconX,
   IconCrown,
   IconArrowRight,
+  IconShield,
+  IconUsers,
 } from "@tabler/icons-react";
 
 interface SidebarProps {
@@ -72,6 +75,15 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   };
 
   const isPremiumActive = sub?.isPremium && sub?.status === "ACTIVE";
+  const userIsAdmin = isAdmin();
+
+  const allNavItems = userIsAdmin
+    ? [
+        ...navItems,
+        { href: "/dashboard/admin", label: "Admin", icon: IconShield, exact: true },
+        { href: "/dashboard/admin/users", label: "Users", icon: IconUsers },
+      ]
+    : navItems;
 
   return (
     <>
@@ -116,7 +128,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-4">
-          <SidebarNav items={navItems} onItemClick={onClose} />
+          <SidebarNav items={allNavItems} onItemClick={onClose} />
 
           {isAuthenticated && !isPremiumActive && (
             <div className="mx-1 mt-6 rounded-xl border-2 border-dashed border-primary/20 bg-primary/[0.03] p-4 transition-all hover:border-primary/30">
