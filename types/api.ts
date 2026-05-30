@@ -114,3 +114,34 @@ export interface SubscriptionResponseDto {
   isPremium: boolean;
 }
 
+export type AuthProvider = 'EMAIL' | 'GOOGLE' | 'BOTH';
+export type UserRole = 'USER' | 'ADMIN';
+
+export interface AdminUserResponseDto {
+  id: number;
+  email: string;
+  authProvider: AuthProvider;
+  role: UserRole;
+  createdAt: string;
+  subscriptionPlan: 'FREE' | 'PREMIUM';
+  subscriptionStatus: 'ACTIVE' | 'CANCELLED' | 'ON_HOLD' | 'FAILED' | 'EXPIRED';
+  linkCount: number;
+  totalClicks: number;
+}
+
+export interface AdminStatsResponseDto {
+  totalUsers: number;
+  emailUsers: number;
+  googleUsers: number;
+  bothUsers: number;
+  adminUsers: number;
+  newUsersLast7Days: number;
+  newUsersLast30Days: number;
+  totalLinks: number;
+  totalClicks: number;
+  freeSubscriptions: number;
+  premiumSubscriptions: number;
+  activeSubscriptions: number;
+  cancelledSubscriptions: number;
+}
+
