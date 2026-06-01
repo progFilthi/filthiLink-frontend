@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [stats, setStats] = useState<AdminStatsResponseDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -30,6 +31,8 @@ export default function AdminPage() {
       } catch (err) {
         if (err instanceof ApiError && err.status === 403) {
           setIsUnauthorized(true);
+        } else {
+          setError(err instanceof ApiError ? err.message : "Failed to load stats");
         }
       } finally {
         setIsLoading(false);
@@ -47,6 +50,16 @@ export default function AdminPage() {
             <Skeleton key={i} className="h-28 rounded-xl" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-md py-24 text-center">
+        <IconShield className="mx-auto h-12 w-12 text-destructive" />
+        <h1 className="mt-4 text-xl font-semibold">Error</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
       </div>
     );
   }

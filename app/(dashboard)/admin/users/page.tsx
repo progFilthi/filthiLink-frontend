@@ -24,6 +24,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUserResponseDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -33,6 +34,8 @@ export default function AdminUsersPage() {
       } catch (err) {
         if (err instanceof ApiError && err.status === 403) {
           setIsUnauthorized(true);
+        } else {
+          setError(err instanceof ApiError ? err.message : "Failed to load users");
         }
       } finally {
         setIsLoading(false);
@@ -50,6 +53,16 @@ export default function AdminUsersPage() {
             <Skeleton key={i} className="h-12 w-full rounded-lg" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-md py-24 text-center">
+        <IconShield className="mx-auto h-12 w-12 text-destructive" />
+        <h1 className="mt-4 text-xl font-semibold">Error</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
       </div>
     );
   }
