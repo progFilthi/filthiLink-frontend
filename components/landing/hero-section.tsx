@@ -7,7 +7,6 @@ import { LinksService } from "@/lib/api/links.service";
 import { toast } from "sonner";
 import { ShortenerInput } from "@/components/shortener-input";
 import { ResultCard } from "@/components/result-card";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
@@ -50,15 +49,20 @@ export function HeroSection() {
   };
 
   return (
-    <section className="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center px-6 py-20 overflow-hidden">
-      <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+    <section className="relative flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center px-6 py-16 overflow-hidden">
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-[30rem] w-[30rem] rounded-full bg-primary/5 blur-3xl" />
+      </div>
+
+      <div className="mx-auto flex w-full max-w-3xl flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <Badge variant="outline" className="mb-8 h-7 px-3 text-sm font-medium text-muted-foreground border-border bg-muted/30">
-            Developer-focused URL shortener
+          <Badge variant="secondary" className="mb-8 h-7 px-4 text-sm font-medium shadow-none">
+            <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            URL shortener
           </Badge>
         </motion.div>
         
@@ -68,16 +72,17 @@ export function HeroSection() {
           transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
         >
-          Short URLs. <span className="text-muted-foreground">Track everything.</span>
+          Shorten your links in{" "}
+          <span className="text-muted-foreground">two clicks</span>
         </motion.h1>
 
         <motion.p 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-          className="mb-12 max-w-2xl text-lg text-muted-foreground sm:text-xl leading-relaxed"
+          className="mb-10 max-w-xl text-md text-muted-foreground sm:text-md leading-relaxed"
         >
-          A modern, open-source URL shortener with real-time analytics, API access, and secure link management.
+          Shorten, share, and track your links in real time.
         </motion.p>
 
         <motion.div 
@@ -99,20 +104,6 @@ export function HeroSection() {
               </button>
             </div>
           )}
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-12 flex items-center justify-center gap-6"
-        >
-          <Link
-            href="#pricing"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            See pricing
-          </Link>
         </motion.div>
       </div>
     </section>
