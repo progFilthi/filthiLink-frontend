@@ -1,73 +1,70 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IconLink, IconChartBar, IconApi } from "@tabler/icons-react";
 import { motion } from "framer-motion";
+import { IconLink, IconChartBar, IconApi } from "@tabler/icons-react";
 
 const features = [
   {
     icon: IconLink,
     title: "Instant shortening",
     description:
-      "Transform long, unwieldy URLs into clean, memorable links in milliseconds. Built for speed and reliability.",
+      "Transform long URLs into clean, memorable links in milliseconds.",
   },
   {
     icon: IconChartBar,
     title: "Click analytics",
     description:
-      "Monitor your link performance with real-time metrics. Track referrers, locations, and device types instantly.",
+      "Monitor your link performance with real-time metrics.",
   },
   {
     icon: IconApi,
     title: "API access",
     description:
-      "Integrate link generation into your own applications with our REST API. Complete with predictable endpoints and zero rate limits for premium.",
+      "Integrate link generation into your own applications with our REST API.",
   },
 ];
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="px-6 py-24 overflow-hidden">
-      <div className="mx-auto max-w-5xl">
-        <motion.div 
+    <section id="features" className="py-24 overflow-hidden">
+      <div className="mx-auto max-w-5xl px-6">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.5 }}
-          className="mb-16"
+          className="mb-16 text-center"
         >
           <h2 className="mb-3 text-3xl font-semibold tracking-tight text-foreground">
             Everything you need.
           </h2>
           <p className="text-base text-muted-foreground">
-            Core features built for developers and creators. No fluff.
+            Shorten, track, and optimize your links all in one place.
           </p>
         </motion.div>
+      </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => (
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="grid gap-6 md:grid-cols-3">
+          {features.map((feature, i) => (
             <motion.div
-              key={feature.title}
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
             >
-              <Card className="h-full bg-card border-border shadow-none transition-colors hover:border-foreground/20">
-                <CardHeader className="pb-4">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                    <feature.icon className="h-5 w-5 text-foreground" />
-                  </div>
-                  <CardTitle className="text-base font-semibold text-foreground">
-                    {feature.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="group relative h-full rounded-xl border bg-card p-6 transition-all duration-300 hover:shadow-sm">
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
+                  <feature.icon className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <h3 className="mb-2 text-base font-semibold text-foreground">
+                  {feature.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {feature.description}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>
