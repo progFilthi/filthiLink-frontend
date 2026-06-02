@@ -18,19 +18,25 @@ export function Footer() {
           </div>
 
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4 text-sm text-muted-foreground">
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href="/privacy" className="transition-colors hover:text-foreground">
               Privacy
             </Link>
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href="/terms" className="transition-colors hover:text-foreground">
               Terms
             </Link>
             <a
-              href="https://github.com/filthilink"
+              href="https://github.com/progFilthi"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-foreground"
             >
               GitHub
+            </a>
+            <a
+              href="mailto:gamerfilthi@gmail.com"
+              className="transition-colors hover:text-foreground"
+            >
+              Support
             </a>
           </div>
         </div>

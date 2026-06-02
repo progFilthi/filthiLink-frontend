@@ -315,6 +315,29 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Support</CardTitle>
+          <CardDescription>Get help with your account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label>Email</Label>
+            <div className="relative max-w-sm">
+              <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value="gamerfilthi@gmail.com"
+                readOnly
+                className="pl-9 bg-muted"
+              />
+            </div>
+            <p className="pt-1 text-xs text-muted-foreground">
+              Reach out to our customer care team for help.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       <Dialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>
         <DialogContent>
           <DialogHeader>

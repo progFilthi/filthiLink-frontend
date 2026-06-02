@@ -49,10 +49,10 @@ export function PricingSection() {
   };
 
   const freeFeatures = [
-    '100 links per month',
-    '1 active API key',
-    'Basic click counters',
-    'Standard redirection speed',
+    '20 links per month',
+    'No Api Key Generation',
+    'Basic analytics',
+    'Standard redirection',
   ];
 
   const premiumFeatures = [
@@ -60,8 +60,7 @@ export function PricingSection() {
     'Unlimited active API keys',
     'Real-time detailed analytics',
     'High-speed priority redirection',
-    'API access with zero rate-limiting',
-    '24/7 dedicated support',
+    'API access with zero rate-limiting'
   ];
 
   return (
@@ -101,7 +100,7 @@ export function PricingSection() {
               }`}
             >
               Yearly
-              <span className="absolute -top-2 -right-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground leading-none">
+              <span className="ml-1.5 rounded-md bg-primary px-1.5 py-0.5 text-[11px] font-semibold text-primary-foreground leading-normal">
                 Save 25%
               </span>
             </button>
@@ -160,7 +159,7 @@ export function PricingSection() {
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-foreground">Premium</h3>
-                  <p className="mt-1.5 text-sm text-muted-foreground">For creators, developers, and businesses.</p>
+                  <p className="mt-1.5 text-sm text-muted-foreground">For creators & developers.</p>
                 </div>
                 <Badge variant="default" className="h-6">Pro</Badge>
               </div>
